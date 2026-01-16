@@ -1,6 +1,7 @@
 
 from flask import request,render_template,redirect,url_for
 from flaskapp import app
+from flaskapp.models import User,Post
 login={}
 
 @app.route('/',methods=["GET","POST"])
@@ -16,7 +17,7 @@ def home():
     return render_template('index.html',error=error)
 @app.route('/register',methods=["GET","POST"])
 def register():
-    Name=None
+    error=None
     if request.method=="POST":
         name=request.form.get("name")
         password=request.form.get("password")
