@@ -1,10 +1,6 @@
 from datetime import datetime
-from flask import Flask,flash,render_template,redirect,url_for
-from flask_sqlalchemy import SQLAlchemy
+from flaskapp import db
 
-app=Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///site.db'
-db=SQLAlchemy(app)
 class User(db.Model):
     id=db.Column(db.Integer,primary_key=True)
     username=db.Column(db.String(20),unique=True,nullable=False)
@@ -23,5 +19,3 @@ class Post(db.Model):
     def __repr__(self):
         return f"Post('{self.title}','{self.date_posted}')"
 
-with app.app_context():
-    db.create_all()

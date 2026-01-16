@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sign In</title>
+    </head>
+    <body>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            {{form.username.label}}
+            {{form.username}}<br>
+            {{form.password.label}}
+            {{form.password}}<br>
+            {{form.remember}}
+            {{form.remember.label}}<br>
+            <p>{{form.submit}}</p>
+            {%with messages=get_flashed_messages()%}  
+                {%if messages%}
+                  <p>{{messages}}</p>
+                {%endif%}
+            {%endwith%}
+        </form>
+    </body>
+</html>
