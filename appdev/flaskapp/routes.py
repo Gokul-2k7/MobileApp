@@ -1,8 +1,7 @@
 
 from flask import request,render_template,redirect,url_for
 from flaskapp import app
-from flaskapp.models import User,Post
-login={}
+from flaskapp.models import db,User,Post
 
 @app.route('/',methods=["GET","POST"])
 def home():
@@ -10,7 +9,8 @@ def home():
     if request.method=="POST":
         name=request.form.get("name")
         password=request.form.get("password")
-        if name in login and login[name]==password:
+        user = User.query.filter_by(username=name).first()
+        if user and user.password == password:
             return f"HI {name}"
         else:
            error="Invalid username or password"        
@@ -21,10 +21,13 @@ def register():
     if request.method=="POST":
         name=request.form.get("name")
         password=request.form.get("password")
-        if name in login:
+        user=User.query.filter_by(username=name).first()
+        if user:
             error="Username exists"
             return render_template('register.html',error=error)
-        login[name]=password
+        user=User(username=name,email=f"{name}@gmail.com",password=password)
+        db.session.add(user)
+        db.session.commit()
         return redirect(url_for('home'))
     return render_template('register.html')
 
