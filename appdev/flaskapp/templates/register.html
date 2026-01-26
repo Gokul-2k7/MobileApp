@@ -1,17 +1,32 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>CHAT JPT</title>
-    </head>
-    <body>
-        <form method="post">
-            <h1><b>REGISTER</b></h1>
-            Username:<input type="text" name="name"><br>
-            Password:<input type="password" name="password"><br>
-            <button type="submit">Submit</button><br>
+{% extends "base.html" %}
+{% block content %}
+        <form action="" method="post" >
+            <h1><b>REGISTER PAGE</b></h1>
+        {{form.hidden_tag()}}
+          <p>{{form.username.label}}{{form.username(size=20)}}<br>
+            {%if form.username.errors%}
+                {%for error in form.username.errors%}
+                    <span style="color:red;">[{{error}}]</span><br>
+            {%endfor%}
+            {%endif%}
+            {{form.email.label}}{{form.email(size=30)}}<br>
+            {%if form.email.errors%}
+                {%for error in form.email.errors%}
+                    <span style="color:red;">[{{error}}]</span><br>
+            {%endfor%}
+            {%endif%}
+            {{form.password.label}}{{form.password(size=20)}}<br>
+            {{form.confirm_password.label}}{{form.confirm_password(size=20)}}<br>
+            {%if form.confirm_password.errors%}
+                {%for error in form.confirm_password.errors%}
+                    <span style="color:red;">[{{error}}]</span><br>
+            {%endfor%}
+            {%endif%}
+            {{form.remember()}}{{form.remember.label}}<br>
+            {{form.submit()}}
+        </p>
         </form>    
         {%if error%}
             <p style="color:red;">{{error}}</p>
         {% endif %}  
-    </body>
-</html>
+{% endblock %}

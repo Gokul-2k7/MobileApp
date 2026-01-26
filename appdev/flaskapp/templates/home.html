@@ -1,17 +1,16 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>CHAT JPT</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <h1 >HI USER</h1>
-        <p>Some of the best multiplayer games to play:</p>
-        <ul>
-            <li>Human Fall Flat</li>
-            <li>Rocket League</li>
-            <li>Phasmophobia</li>
-            <li>Dead By Daylight</li>
-        </ul>
-    </body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+    {%if current_user.is_authenticated %}
+    <header> <a href="{{ url_for('account') }}">Account</a></header>
+    {%else%}
+    <header> <a href="{{ url_for('login') }}">Login</a> <a href="{{ url_for('register') }}">Register</a></header>
+    {%endif%}
+    <p>HI ! WELCOME TO GLOBALLY.</p><br>
+    <form>
+    <p> ALL POSTS</p>
+    {%for posts in posts%}
+    <p><h2> <p style="color: #ebb3d3;">{{posts.user.username}}</p> Title: {{posts.title}}</h2><h6>{{posts.date_posted}}</h6>
+    {{posts.content}}</p><br>
+    {%endfor%}
+    </form>
+{% endblock %}

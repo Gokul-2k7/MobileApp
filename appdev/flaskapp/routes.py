@@ -2,35 +2,57 @@
 from flask import request,render_template,redirect,url_for
 from flaskapp import app
 from flaskapp.models import db,User,Post
-
-@app.route('/',methods=["GET","POST"])
+from flaskapp.forms import Loginform, RegistrationForm
+from flaskapp import bcrypt
+from flask_login import login_user,logout_user,login_required,current_user
+@app.route('/login',methods=["GET","POST"])
 def login():
     error=None
-    if request.method=="POST":
-        name=request.form.get("name")
-        password=request.form.get("password")
+    form=Loginform()
+    if form.validate_on_submit():
+        name=form.username.data
+        password=form.password.data
         user = User.query.filter_by(username=name).first()
-        if user and user.password == password:
-            return redirect(url_for('home',name=name))
+        if user and bcrypt.check_password_hash(user.password, password):
+            login_user(user,form.remember_me.data)
+            next_page=request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home'))
         else:
-           error="Invalid username or password"        
-    return render_template('index.html',error=error)
+           error="Invalid password"        
+    return render_template('index.html',error=error,form=form)
+
 @app.route('/register',methods=["GET","POST"])
 def register():
     error=None
-    if request.method=="POST":
-        name=request.form.get("name")
-        password=request.form.get("password")
+    form=RegistrationForm()
+    if form.validate_on_submit():
+        name=form.username.data
+        email=form.email.data
+        password=form.password.data
         user=User.query.filter_by(username=name).first()
         if user:
             error="Username exists"
-            return render_template('register.html',error=error)
-        user=User(username=name,email=f"{name}@gmail.com",password=password)
+            return render_template('register.html',error=error,form=form)
+        user=User(username=name,email=email,password=bcrypt.generate_password_hash(password).decode('utf-8'))
         db.session.add(user)
         db.session.commit()
         return redirect(url_for('login'))
-    return render_template('register.html')
+    return render_template('register.html',form=form,error=error)
 
-@app.route('/home')
-def home(name):
-    return f"Hi {name}\nThis is the home page"
+@app.route('/')
+def home():
+    posts=Post.query.all()
+    user=User()
+    name=request.args.get("name")
+    return render_template('home.html',posts=posts,current_user=current_user,user=user)
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html',user=current_user)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
