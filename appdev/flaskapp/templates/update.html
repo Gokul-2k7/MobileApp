@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 
-<form action="" method="post">
-    <h1>Register</h1>
+<form method="POST" action="" enctype="multipart/form-data">
+    <h1>Update Account</h1>
     {{ form.hidden_tag() }}
     
     <div>
         <label>{{ form.username.label }}</label>
-        {{ form.username(size=20) }}
+        {{ form.username() }}
         {% if form.username.errors %}
             {% for error in form.username.errors %}
                 <span class="error-message">{{ error }}</span>
@@ -17,7 +17,7 @@
     
     <div>
         <label>{{ form.email.label }}</label>
-        {{ form.email(size=30) }}
+        {{ form.email() }}
         {% if form.email.errors %}
             {% for error in form.email.errors %}
                 <span class="error-message">{{ error }}</span>
@@ -27,12 +27,17 @@
     
     <div>
         <label>{{ form.password.label }}</label>
-        {{ form.password(size=20) }}
+        {{ form.password() }}
+        {% if form.password.errors %}
+            {% for error in form.password.errors %}
+                <span class="error-message">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
     </div>
     
     <div>
         <label>{{ form.confirm_password.label }}</label>
-        {{ form.confirm_password(size=20) }}
+        {{ form.confirm_password() }}
         {% if form.confirm_password.errors %}
             {% for error in form.confirm_password.errors %}
                 <span class="error-message">{{ error }}</span>
@@ -41,18 +46,18 @@
     </div>
     
     <div>
-        {{ form.submit() }}
+        <label>{{ form.image_file.label }}</label>
+        {{ form.image_file() }}
+        {% if form.image_file.errors %}
+            {% for error in form.image_file.errors %}
+                <span class="error-message">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
     </div>
     
-    <p style="text-align: center; margin-top: 1.5rem;">
-        Already have an account? <a href="{{ url_for('login') }}">Login here</a>
-    </p>
-</form>
-
-{% if error %}
-    <div class="card" style="background: #fee; border-left: 4px solid var(--error-red); margin-top: 1rem;">
-        <p class="error-message">{{ error }}</p>
+    <div>
+        {{ form.submit() }}
     </div>
-{% endif %}
+</form>
 
 {% endblock %}

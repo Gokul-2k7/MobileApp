@@ -1,8 +1,20 @@
-{%extends "base.html" %}
-{%block content%}
-    <header> <a href="{{ url_for('home') }}">Home</a></header>
-    <h1>ACCOUNT PAGE</h1>
-    <p> Welcome, {{user.username}}!</p>
-    <p>Your email: {{user.email}}</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card account-container">
+    <h1>My Account</h1>
+    <p class="welcome-message">Welcome, {{ user.username }}!</p>
+    
+    <img src="{{ image_file }}" alt="{{ user.username }}'s profile picture">
+    
+    <div class="account-info">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+    </div>
+    
+    <div class="account-actions">
+        <a href="{{ url_for('update_account') }}">✏️ Update Account</a>
+        <a href="{{ url_for('logout') }}">🚪 Logout</a>
+    </div>
+</div>
+
 {% endblock %}

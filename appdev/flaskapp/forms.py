@@ -1,10 +1,11 @@
 from flaskapp import bcrypt
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField,BooleanField
+from flask_wtf.file import FileField, FileAllowed
+from wtforms import StringField, PasswordField, SubmitField,BooleanField,TextAreaField
 from wtforms.validators import DataRequired, Email, Length
 from flaskapp.models import User
 from wtforms import ValidationError
-
+from flask_login import current_user
 
 class Loginform(FlaskForm):
     username=StringField('Username',validators=[DataRequired(),Length(min=2,max=20)])
@@ -22,7 +23,6 @@ class RegistrationForm(FlaskForm):
     email=StringField('Email',validators=[DataRequired()])
     password=PasswordField('Password',validators=[DataRequired()])
     confirm_password=PasswordField('Confirm Password',validators=[DataRequired()])
-    remember=BooleanField('Remember Me')
     submit=SubmitField('Sign Up')
     def validate_username(self,username):
         user=User.query.filter_by(username=username.data).first()
@@ -35,3 +35,29 @@ class RegistrationForm(FlaskForm):
     def validate_confirm_password(self,confirm_password):
         if confirm_password.data != self.password.data:
             raise ValidationError('Passwords do not match. Please try again.')
+
+class UpdateForm(FlaskForm):
+    username=StringField('Username',validators=[Length(min=2,max=20)])
+    email=StringField('Email')
+    password=PasswordField('Password')
+    confirm_password=PasswordField('Confirm Password')
+    image_file=FileField("Upload Profile Picture",validators=[FileAllowed(['jpg','png'])],default='default.jpg')
+    submit=SubmitField('Update')
+    def validate_username(self,username):
+        if username.data != current_user.username:
+            user=User.query.filter_by(username=username.data).first()
+            if user:
+                raise ValidationError('Username already exists. Please choose a different one.')
+    def validate_email(self,email):
+        if email.data != current_user.email:
+            user=User.query.filter_by(email=email.data).first()
+            if user:
+                raise ValidationError('Email already registered. Please choose a different one.')
+    def validate_confirm_password(self,confirm_password):
+        if confirm_password.data != self.password.data:
+            raise ValidationError('Passwords do not match. Please try again.')
+        
+class PostForm(FlaskForm):
+    title=StringField('Title',validators=[DataRequired()])
+    content=TextAreaField('Content',validators=[DataRequired()])
+    submit=SubmitField('Submit')

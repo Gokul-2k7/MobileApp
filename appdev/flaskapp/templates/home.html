@@ -1,16 +1,40 @@
 {% extends "base.html" %}
 {% block content %}
-    {%if current_user.is_authenticated %}
-    <header> <a href="{{ url_for('account') }}">Account</a></header>
-    {%else%}
-    <header> <a href="{{ url_for('login') }}">Login</a> <a href="{{ url_for('register') }}">Register</a></header>
-    {%endif%}
-    <p>HI ! WELCOME TO GLOBALLY.</p><br>
-    <form>
-    <p> ALL POSTS</p>
-    {%for posts in posts%}
-    <p><h2> <p style="color: #ebb3d3;">{{posts.user.username}}</p> Title: {{posts.title}}</h2><h6>{{posts.date_posted}}</h6>
-    {{posts.content}}</p><br>
-    {%endfor%}
-    </form>
+
+<div class="card">
+    <h1>Welcome to GLOBALLY</h1>
+    <p class="welcome-message">Share your thoughts!</p>
+    <div style="text-align: center;">
+        <a href="{{ url_for('new_posts') }}" class="create-post-btn">Create New Post</a>
+    </div>
+</div>
+
+<h2 class="section-header">All Posts</h2>
+
+{% for posts in posts %}
+<div class="post-card">
+    <div class="post-header">
+        <img src="{{ url_for('static', filename='pics/' + posts.author.image_file) }}" alt="{{ posts.author.username }}'s profile picture">
+        <div>
+            <p class="post-author">{{ posts.author.username }}</p>
+            <h6>{{ posts.date_posted.strftime('%d %b %Y') }}</h6>
+        </div>
+    </div>
+    
+    <h2>{{ posts.title }}</h2>
+    <div class="post-content">
+        <p>{{ posts.content }}</p>
+    </div>
+    
+    {% if current_user == posts.author %}
+    <div class="post-actions">
+        <a href="{{ url_for('update_post', post_id=posts.id) }}">Update</a>
+        <form action="{{ url_for('delete_post', post_id=posts.id) }}" method="post" style="margin: 0; padding: 0; box-shadow: none;">
+            <button type="submit"> Delete</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+
 {% endblock %}

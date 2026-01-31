@@ -1,12 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>GLOBALLY</title>
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('home') }}">Home</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('account') }}">Account</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </header>
 
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-        <title>GLOBALLY</title>
-    </head>
-    <body>
+    <div class="container">
         {% block content %}
         {% endblock %}
-    </body>
+    </div>
+</body>
 </html>

@@ -1,26 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
-        <form action='' method="post">
-            <h1><b>LOGIN PAGE</b></h1>
-            {{form.hidden_tag()}}
-        <p> {{form.username.label}}{{form.username(size=20)}}<br>
-            {%if form.username.errors%}
-                {%for error in form.username.errors%}
-                    <span style="color:red;">[{{error}}]</span><br>
-            {%endfor%}
-            {%endif%}
-            {{form.password.label}}{{form.password(size=20)}}<br>
-            {%if form.password.errors%}
-                {%for error in form.password.errors%}
-                    <span style="color:red;">[{{error}}]</span>
-            {%endfor%}
-            {%endif%}<br>
-            {{form.submit()}}
-        </p>
-         <p>Already have an account? <a href="{{url_for('register')}}">Register here</a></p>
-        </form> 
-       
-        {%if error%}
-            <p style="color:red;">{{error}}</p>
+
+<form action="" method="post">
+    <h1>Login</h1>
+    {{ form.hidden_tag() }}
+    
+    <div>
+        <label>{{ form.username.label }}</label>
+        {{ form.username(size=20) }}
+        {% if form.username.errors %}
+            {% for error in form.username.errors %}
+                <span class="error-message">{{ error }}</span>
+            {% endfor %}
         {% endif %}
+    </div>
+    
+    <div>
+        <label>{{ form.password.label }}</label>
+        {{ form.password(size=20) }}
+        {% if form.password.errors %}
+            {% for error in form.password.errors %}
+                <span class="error-message">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
+    <div style="display: flex; align-items: center; margin: 1rem 0;">
+        {{ form.remember_me() }}
+        {{ form.remember_me.label }}
+    </div>
+    
+    <div>
+        {{ form.submit() }}
+    </div>
+    
+    <p style="text-align: center; margin-top: 1.5rem;">
+        Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+    </p>
+</form>
+
+{% if error %}
+    <div class="card" style="background: #fee; border-left: 4px solid var(--error-red); margin-top: 1rem;">
+        <p class="error-message">{{ error }}</p>
+    </div>
+{% endif %}
+
 {% endblock %}
