@@ -1,4 +1,4 @@
-from flaskapp import app,db
+from appdev.flaskapp import app,db
 
 
 if __name__ == "__main__":
