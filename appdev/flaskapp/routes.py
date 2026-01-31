@@ -46,12 +46,7 @@ def register():
 @app.route('/')
 def home():
     posts=Post.query.all()
-    if current_user.image_file:
-        image_file=current_user.image_file
-    else:
-        image_file="default.jpg"
-    image_file=url_for('static',filename='pics/'+ image_file)
-    return render_template('home.html',posts=posts,current_user=current_user,image_file=image_file)
+    return render_template('home.html',posts=posts,current_user=current_user)
 
 @app.route('/account')
 @login_required
