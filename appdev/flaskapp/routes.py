@@ -1,9 +1,9 @@
 
 from flask import abort, request,render_template,redirect,url_for
-from flaskapp import app
-from flaskapp.models import db,User,Post
-from flaskapp.forms import Loginform, RegistrationForm,UpdateForm,PostForm
-from flaskapp import bcrypt
+from appdev.flaskapp import app
+from appdev.flaskapp.models import db,User,Post
+from appdev.flaskapp.forms import Loginform, RegistrationForm,UpdateForm,PostForm
+from appdev.flaskapp import bcrypt
 from flask_login import login_user,logout_user,login_required,current_user
 import secrets
 import os

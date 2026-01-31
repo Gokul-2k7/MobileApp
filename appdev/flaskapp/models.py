@@ -1,7 +1,7 @@
 from datetime import datetime
 from flaskapp import db
 from flask_login import UserMixin
-from flaskapp import login_manager
+from appdev.flaskapp import login_manager
 
 
 @login_manager.user_loader
