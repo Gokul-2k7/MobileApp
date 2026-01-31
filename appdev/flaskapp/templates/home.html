@@ -15,7 +15,7 @@
 {% for post in posts %}
 <div class="post-card">
     <div class="post-header">
-        <img src="{{ url_for('static', filename=('pics/' + post.author.image_file) or 'default.jpg') }}" alt="{{ post.author.username }}'s profile picture">
+        <img src="{{image_file}}" alt="{{ post.author.username }}'s profile picture">
         <div>
             <p class="post-author">{{ post.author.username }}</p>
             <h6>{{ post.date_posted.strftime('%d %b %Y') }}</h6>
