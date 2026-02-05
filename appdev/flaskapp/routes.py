@@ -1,10 +1,11 @@
-
-from flask import abort, request,render_template,redirect,url_for
-from appdev.flaskapp import app
-from appdev.flaskapp.models import db,User,Post
-from appdev.flaskapp.forms import Loginform, RegistrationForm,UpdateForm,PostForm
-from appdev.flaskapp import bcrypt
+from flask import abort, request,render_template,redirect,url_for,flash
+from flaskapp import app,mail
+from flaskapp.models import db,User,Post
+from flaskapp.forms import Loginform, RegistrationForm,UpdateForm,PostForm,RequestResetForm,ResetPasswordForm
+from flaskapp import bcrypt
 from flask_login import login_user,logout_user,login_required,current_user
+from itsdangerous import URLSafeTimedSerializer as Serializer
+from flask_mail import Message
 import secrets
 import os
 from PIL import Image 
@@ -45,7 +46,8 @@ def register():
 
 @app.route('/')
 def home():
-    posts=Post.query.all()
+    page=request.args.get('page',1,type=int)
+    posts=Post.query.order_by(Post.date_posted.desc()).paginate(per_page=5,error_out=False,page=page)
     return render_template('home.html',posts=posts,current_user=current_user)
 
 @app.route('/account')
@@ -123,6 +125,13 @@ def update_account():
         form.email.data=current_user.email
     return render_template('update.html',form=form)
 
+@app.route('/user/<string:username>')
+def user_posts(username):
+    page=request.args.get('page',1,type=int)
+    user=User.query.filter_by(username=username).first_or_404()
+    posts=Post.query.filter_by(author=user).order_by(Post.date_posted.desc()).paginate(per_page=5,error_out=False,page=page)
+    return render_template('user_posts.html',posts=posts,user=user)
+
 def save_picture(form_picture):
     random_hex=secrets.token_hex(8)
     _,ext= os.path.splitext(form_picture.filename)
@@ -132,3 +141,42 @@ def save_picture(form_picture):
     img.thumbnail((200,200))
     img.save(picture_path)
     return picture_fn
+
+def send_reset_email(user):
+    print("MAIL_USERNAME =", app.config.get('MAIL_USERNAME'))
+    print("MAIL_DEFAULT_SENDER =", app.config.get('MAIL_DEFAULT_SENDER'))
+    print("MAIL OBJECT =", mail)
+    token=user.get_reset_token()
+    msg=Message('Password Reset Request',recipients=[user.email])
+    msg.body=f'''To reset your password, visit the following link:
+{url_for('reset_token',token=token,_external=True)}
+If you did not make this request then simply ignore this email and no changes will be made.
+'''
+    mail.send(msg)
+
+@app.route('/reset_password/<token>',methods=['GET','POST'])
+def reset_token(token):
+    user=User.verify_token(token)
+    if not user:
+        flash('Invalid or expired token','failure')
+        return redirect(url_for('request_reset'))
+    form=ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_pass=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password=hashed_pass
+        user.commit()
+        flash('Your password has been updated!')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html',form=form)
+        
+@app.route('/request_reset',methods=['GET','POST'])
+def request_reset():
+    form=RequestResetForm()
+    if form.validate_on_submit():
+        user=User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_reset_email(user)
+        flash('Link has sent to registered email,if exists','info')
+        return redirect(url_for('login'))
+    return render_template('request_reset.html',form=form)
+

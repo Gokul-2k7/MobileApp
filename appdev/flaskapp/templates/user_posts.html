@@ -1,18 +1,15 @@
-{% extends "base.html" %}
-{% block content %}
+{%extends "base.html"%}
+{%block content%}
 
-<div class="card">
-    <h1>Welcome to GLOBALLY</h1>
-    <p class="welcome-message">Share your thoughts!</p>
-    <div style="text-align: center;">
-        <a href="{{ url_for('new_posts') }}" class="create-post-btn">Create New Post</a>
+    <div class="card account-container">
+    
+    <img src="{{ url_for('static', filename='pics/' + (user.image_file or 'default.jpg')) }}" alt="{{ user.username }}'s profile picture">
+    
+        <div class="account-info">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        </div>
     </div>
-</div>
-
-<h2 class="section-header">All Posts</h2>
-
-
-{% for post in posts.items %}
+    {% for post in posts.items %}
 <div class="post-card">
     <div class="post-header">
         <img src="{{ url_for('static', filename='pics/' + (post.author.image_file or 'default.jpg')) }}" alt="{{ post.author.username }}'s profile picture">
@@ -21,12 +18,10 @@
             <h6>{{ post.date_posted.strftime('%d %b %Y') }}</h6>
         </div>
     </div>
-    
     <h2>{{ post.title }}</h2>
     <div class="post-content">
-        <p>{{ post.content }}</p>
+        <p>{{ post.content }}</p>3
     </div>
-    
     {% if current_user == post.author %}
     <div class="post-actions">
         <a href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
@@ -35,21 +30,17 @@
         </form>
     </div>
     {% endif %}
+    {% endfor %}
 </div>
-{% endfor %}
-
-<div class="pagination">
-    {% for page_num in posts.iter_pages(left_edge=2,right_edge=2,right_current=1,left_current=1) %}
-        {% if page_num %}
-            {% if page_num == posts.page %}
-                <span class="current-page">{{ page_num }}</span>
+    {%for page in posts.iter_pages() %}
+        {% if page %}
+            {% if page != posts.page %}
+                <a href="{{ url_for('user_posts', username=user.username, page=page) }}">{{ page }}</a>
             {% else %}
-                <a href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                <strong>{{ page }}</strong>
             {% endif %}
         {% else %}
-            <span class="ellipsis">…</span>
+            ...
         {% endif %}
     {% endfor %}
-        
-</div>
-{% endblock %}
+{%endblock%}
