@@ -14,7 +14,7 @@
     <div class="post-header">
         <img src="{{ url_for('static', filename='pics/' + (post.author.image_file or 'default.jpg')) }}" alt="{{ post.author.username }}'s profile picture">
         <div>
-            <a href="{{ url_for('user_posts', username=post.author.username) }}" class="post-author-link"><p class="post-author">{{ post.author.username }}</p></a>
+            <a href="{{ url_for('users.user_posts', username=post.author.username) }}" class="post-author-link"><p class="post-author">{{ post.author.username }}</p></a>
             <h6>{{ post.date_posted.strftime('%d %b %Y') }}</h6>
         </div>
     </div>
@@ -24,18 +24,19 @@
     </div>
     {% if current_user == post.author %}
     <div class="post-actions">
-        <a href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
-        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post" style="margin: 0; padding: 0; box-shadow: none;">
+        <a href="{{ url_for('posts.update_post', post_id=post.id) }}">Update</a>
+        <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="post" style="margin: 0; padding: 0; box-shadow: none;">
             <button type="submit"> Delete</button>
         </form>
     </div>
     {% endif %}
-    {% endfor %}
 </div>
+    {% endfor %}
+
     {%for page in posts.iter_pages() %}
         {% if page %}
             {% if page != posts.page %}
-                <a href="{{ url_for('user_posts', username=user.username, page=page) }}">{{ page }}</a>
+                <a href="{{ url_for('users.user_posts', username=user.username, page=page) }}">{{ page }}</a>
             {% else %}
                 <strong>{{ page }}</strong>
             {% endif %}

@@ -1,11 +1,12 @@
 from flaskapp import bcrypt
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField,BooleanField,TextAreaField
-from wtforms.validators import DataRequired, Email, Length
-from flaskapp.models import User
+from wtforms import StringField, PasswordField, SubmitField,BooleanField
+from wtforms.validators import DataRequired, Length
+from flaskapp.users.models import User
 from wtforms import ValidationError
 from flask_login import current_user
+
 class Loginform(FlaskForm):
     username=StringField('Username',validators=[DataRequired(),Length(min=2,max=20)])
     password=PasswordField('Password',validators=[DataRequired()])
@@ -55,11 +56,7 @@ class UpdateForm(FlaskForm):
     def validate_confirm_password(self,confirm_password):
         if confirm_password.data != self.password.data:
             raise ValidationError('Passwords do not match. Please try again.')
-        
-class PostForm(FlaskForm):
-    title=StringField('Title',validators=[DataRequired()])
-    content=TextAreaField('Content',validators=[DataRequired()])
-    submit=SubmitField('Submit')
+
 
 class RequestResetForm(FlaskForm):
     email=StringField('Email',validators=[DataRequired()])

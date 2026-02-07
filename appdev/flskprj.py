@@ -1,4 +1,6 @@
-from flaskapp import app,db
+from flaskapp import create_app,db
+
+app=create_app()
 
 with app.app_context():
     db.create_all()

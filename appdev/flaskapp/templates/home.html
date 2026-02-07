@@ -5,7 +5,7 @@
     <h1>Welcome to GLOBALLY</h1>
     <p class="welcome-message">Share your thoughts!</p>
     <div style="text-align: center;">
-        <a href="{{ url_for('new_posts') }}" class="create-post-btn">Create New Post</a>
+        <a href="{{ url_for('posts.new_posts') }}" class="create-post-btn">Create New Post</a>
     </div>
 </div>
 
@@ -17,7 +17,7 @@
     <div class="post-header">
         <img src="{{ url_for('static', filename='pics/' + (post.author.image_file or 'default.jpg')) }}" alt="{{ post.author.username }}'s profile picture">
         <div>
-            <a href="{{ url_for('user_posts', username=post.author.username) }}" class="post-author-link"><p class="post-author">{{ post.author.username }}</p></a>
+            <a href="{{ url_for('users.user_posts', username=post.author.username) }}" class="post-author-link"><p class="post-author">{{ post.author.username }}</p></a>
             <h6>{{ post.date_posted.strftime('%d %b %Y') }}</h6>
         </div>
     </div>
@@ -29,8 +29,8 @@
     
     {% if current_user == post.author %}
     <div class="post-actions">
-        <a href="{{ url_for('update_post', post_id=post.id) }}">Update</a>
-        <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post" style="margin: 0; padding: 0; box-shadow: none;">
+        <a href="{{ url_for('posts.update_post', post_id=post.id) }}">Update</a>
+        <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="post" style="margin: 0; padding: 0; box-shadow: none;">
             <button type="submit"> Delete</button>
         </form>
     </div>
@@ -44,7 +44,7 @@
             {% if page_num == posts.page %}
                 <span class="current-page">{{ page_num }}</span>
             {% else %}
-                <a href="{{ url_for('home', page=page_num) }}">{{ page_num }}</a>
+                <a href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
             {% endif %}
         {% else %}
             <span class="ellipsis">…</span>
